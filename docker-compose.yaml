@@ -1,0 +1,73 @@
+###  DOCKER COMPOSE ###
+version: "3"
+
+networks:
+  nginx-php80-postgres13-redis-node:
+
+services:
+  ## nginx
+  nginx-service:
+    image: nginx:stable-alpine
+    container_name: nginx-container
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/project
+      - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php80-service
+      - postgres13-service
+    networks:
+      - nginx-php80-postgres13-redis-node
+
+  ## php80
+  php80-service:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: php80-container
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/var/www/project
+    networks:
+      - nginx-php80-postgres13-redis-node
+
+  #postgres13
+  postgres13-service:
+    image: postgres:latest
+    container_name: postgres13-container
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - nginx-php80-postgres13-redis-node
+
+  #redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - nginx-php80-postgres13-redis-node
+
+  # nodejs
+  node:
+    image: node:16-buster-slim
+    container_name: node
+    command: npm install
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/var/www/project
+      - ./node_modules:/var/www/project/node_modules
+    working_dir: /var/www/project
+    networks:
+      - nginx-php80-postgres13-redis-node
