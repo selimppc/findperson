@@ -7,26 +7,28 @@ Application - Find Person
     $ docker-compose up --build
     
     Detached command/ Background Process
+    $ docker-compose up -d --build
 
-    $ docker-compose up -d
+## Step 2 (copy env file form source sample)
 
-## Step 2 (composer install)
+    $ docker-compose run --rm php80-service cp .env.example .env
+
+## Step 3 (composer install)
 
     $ docker-compose run --rm php80-service composer install
 
-##  Step 3 ( Migrate  database )
+##  Step 4 ( Migrate  database )
 
     $ docker-compose run --rm php80-service php artisan migrate
 
     Or Refresh 
     $ docker-compose run --rm php80-service php artisan migrate:fresh
 
-##  Step 4 (seed data from CSV)
+##  Step 5 (seed data from CSV)
 
-    $ docker-compose run --rm php80-service php artisan db:seed --class
+    $ docker-compose run --rm php80-service php artisan db:seed --class=PersonDataSeeder
 
-
-##  Step 5 (Browse Site on 8080 port)
+##  Step 6 (Browse Site on 8080 port)
 
     http://localhost:8080/  -> there is a button to naviagte to persons list
     and for persons -> http://localhost:8080/persons
