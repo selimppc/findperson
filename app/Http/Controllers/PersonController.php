@@ -28,9 +28,6 @@ class PersonController extends Controller
         $cacheExpiresIn = config('config.CACHE_EXPIRES_IN');
         $initTime = microtime(true);
         $cacheKey = $this->getCacheKey($birthYear, $birthMonth);
-        dump($cacheKey);
-
-
 
         # Result
         $results = $this->cacheOrQuery($cacheKey, $cacheExpiresIn, $birthYear, $birthMonth);
