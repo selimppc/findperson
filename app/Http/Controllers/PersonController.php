@@ -36,11 +36,7 @@ class PersonController extends Controller
 
         # Response
         $difference = round(microtime(true) - $initTime,3)*1000;
-        return view('persons', compact(
-            'persons', 'limit', 'difference',
-            'birthYear', 'birthMonth',
-        ));
-
+        return view('persons', compact('persons', 'limit', 'difference'));
     }
 
 
