@@ -6,13 +6,13 @@
             <div class="col-md-12">
 
                     <form action="{{ route('persons') }}" method="GET" >
-                        <input type="hidden" name="rowLimit" value={{$limit}} />
+                        <input type="hidden" name="rowLimit" value="{!!  $limit !!}" />
                         <div class="input-group">
                             <div class="form-outline" style="margin-right: 5px">
-                                <input type="number" name="birthYear" placeholder="search by birth year" class="form-control" />
+                                <input type="number" name="birthYear" value="{!! $birthYear !!}" placeholder="search by birth year" class="form-control" />
                             </div>
                             <div class="form-outline" style="margin-right: 5px">
-                                <input type="number" name="birthMonth" placeholder="search by birth year" class="form-control" maxlength="12"  />
+                                <input type="number" name="birthMonth" value="{!! $birthMonth !!}" placeholder="search by birth year" class="form-control" maxlength="12"  />
                             </div>
 
                             <button type="submit" class="btn btn-primary">

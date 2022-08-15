@@ -9,18 +9,18 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 
-class CollectionHelper
+class CollectionHelper implements CollectionHelperInterface
 {
 
     /**
      * @param Collection $results
-     * @param $pageSize
+     * @param int $pageSize
      * @param $birthYear
      * @param $birthMonth
      * @return LengthAwarePaginator
      * @throws BindingResolutionException
      */
-    public static function paginate(Collection $results, $pageSize, $birthYear, $birthMonth): LengthAwarePaginator
+    public static function paginate(Collection $results, int $pageSize, $birthYear, $birthMonth): LengthAwarePaginator
     {
         $page = Paginator::resolveCurrentPage('page');
 
@@ -44,7 +44,7 @@ class CollectionHelper
      * @return LengthAwarePaginator
      * @throws BindingResolutionException
      */
-    protected static function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginator
+    public static function paginator(Collection $items, int $total, int $perPage, int $currentPage, array $options): LengthAwarePaginator
     {
         return Container::getInstance()->makeWith(LengthAwarePaginator::class, compact(
             'items', 'total', 'perPage', 'currentPage', 'options'
