@@ -18,6 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-# Route::get('/persons', [PersonController::class, 'index'])->name('persons');
-Route::match(array('GET', 'POST'), '/persons', [PersonController::class, 'index'])->name('persons');
+Route::get('/persons', [PersonController::class, 'index'])->name('persons');
+# Route::match(array('GET', 'POST), '/persons', [PersonController::class, 'index'])->name('persons');
 
