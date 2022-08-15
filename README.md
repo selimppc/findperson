@@ -23,4 +23,4 @@ Application - Find Person
 
 ##  Step 4 (seed data from CSV)
 
-    $ docker-compose run --rm php80-service php artisan db:seed PersonDataSeeder
+    $ docker-compose run --rm php80-service php artisan db:seed --class=PersonDataSeeder

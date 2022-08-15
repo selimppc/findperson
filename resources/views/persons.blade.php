@@ -5,16 +5,14 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
 
-                    <form action="{{ route('persons') }}" method="POST" >
-                        @csrf
-
+                    <form action="{{ route('persons') }}" method="GET" >
                         <input type="hidden" name="rowLimit" value={{$limit}} />
                         <div class="input-group">
                             <div class="form-outline" style="margin-right: 5px">
                                 <input type="number" name="birthYear" placeholder="search by birth year" class="form-control" />
                             </div>
                             <div class="form-outline" style="margin-right: 5px">
-                                <input type="number" name="birthMonth" placeholder="search by birth year" class="form-control" maxlength="12" />
+                                <input type="number" name="birthMonth" placeholder="search by birth year" class="form-control" maxlength="12"  />
                             </div>
 
                             <button type="submit" class="btn btn-primary">
@@ -22,7 +20,6 @@
                             </button>
                         </div>
                         <small><i>execution time : {{$difference}} ms</i></small>
-
                     </form>
 
 
@@ -55,7 +52,7 @@
                         </table>
 
                         <div class="d-flex justify-content-center">
-                            {!! $persons->links() !!}
+                            {!! $persons->render() !!}
                         </div>
 
                     </div>

@@ -2,70 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CollectionHelper;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 
 class PersonController extends Controller
 {
 
     /**
-    * Create a new flight instance.
-    *
-    * @param  Request  $request
-    * @return View
+     * Create a new flight instance.
+     *
+     * @param Request $request
+     * @return View
+     * @throws BindingResolutionException
      */
     public function index(Request $request): View
     {
-        $birthYear = $request->input('birthYear', $request->query('birthYear', null));
-        $birthMonth = $request->input('birthMonth', $request->query('birthMonth', null));
-        $limit = $request->input('rowLimit', $request->query('rowLimit', config('config.PAGINATION_LIMIT')));
-        $cache_expires_id = config('config.CACHE_EXPIRES_IN');
+        $birthYear = $request->query('birthYear', null);
+        $birthMonth = $request->query('birthMonth', null);
+        $limit = $request->query('rowLimit', config('config.PAGINATION_LIMIT'));
+        $cacheExpiresIn = config('config.CACHE_EXPIRES_IN');
         $initTime = microtime(true);
-        $cacheKey = $this->getCacheKey($request, $birthYear, $birthMonth);
+        $cacheKey = $this->getCacheKey($birthYear, $birthMonth);
 
         # Result
-        $persons = $this->cacheOrQuery($cacheKey, $cache_expires_id, $birthYear, $birthMonth, $limit);
+        $results = $this->cacheOrQuery($cacheKey, $cacheExpiresIn, $birthYear, $birthMonth);
+        $collection = collect($results);
+        $persons = CollectionHelper::paginate($collection, $limit, $birthYear, $birthMonth);
 
         # Response
         $difference = round(microtime(true) - $initTime,3)*1000;
-        return view('persons', compact('persons', 'limit', 'difference'));
+        return view('persons', compact(
+            'persons', 'limit', 'difference',
+            'birthYear', 'birthMonth',
+        ));
 
     }
 
 
     /**
      * @param $cacheKey
-     * @param $cache_expires_id
+     * @param $cacheExpiresIn
      * @param $birthYear
      * @param $birthMonth
-     * @param $limit
      * @return mixed
      */
-    private function cacheOrQuery($cacheKey, $cache_expires_id, $birthYear, $birthMonth, $limit): mixed
+    private function cacheOrQuery($cacheKey, $cacheExpiresIn, $birthYear, $birthMonth): mixed
     {
-        dump($cacheKey);
-        return Cache::remember($cacheKey, $cache_expires_id, function () use($birthYear, $birthMonth, $limit) {
-            return $this->dbQuery($birthYear, $birthMonth, $limit);
-        });
-
+        $data = Redis::get($cacheKey);
+        if (!empty($data)){
+            return json_decode($data, FALSE);
+        }else{
+            $data = $this->dbQuery($birthYear, $birthMonth);
+            Redis::set($cacheKey, json_encode($data) );
+            Redis::expire($cacheKey, $cacheExpiresIn);
+        }
+        return $data;
     }
 
     /**
      * @param $birthYear
      * @param $birthMonth
-     * @param $limit
-     * @return LengthAwarePaginator
+     * @return array
      */
-    private function dbQuery($birthYear, $birthMonth, $limit): LengthAwarePaginator
+    private function dbQuery($birthYear, $birthMonth): array
     {
-        dump($birthYear);
-        dump($birthMonth);
-        dump($limit);
         $query = DB::table('persons');
         if ($birthYear != null){
             $query = $query->whereYear('birth_date', $birthYear);
@@ -73,25 +78,20 @@ class PersonController extends Controller
         if ($birthMonth != null){
             $query = $query->whereMonth('birth_date', $birthMonth);
         }
-        $query = $query->paginate($limit);
-        $query->appends (array ('birthYear' => $birthYear, 'birthMonth' => $birthMonth));
-        return $query;
+        return $query->get()->toArray();
     }
 
     /**
-     * @param $request
      * @param $birthYear
      * @param $birthMonth
      * @return string
      */
-    private function getCacheKey($request, $birthYear, $birthMonth): string
+    private function getCacheKey($birthYear, $birthMonth): string
     {
         $cacheKey = 'persons';
-        if ($request->isMethod('POST')){
-            $cacheKey = $cacheKey."_".$birthYear."_".$birthMonth;
-        }
-        return $cacheKey;
+        return $cacheKey."_".$birthYear."_".$birthMonth;
     }
+
 
 }
 

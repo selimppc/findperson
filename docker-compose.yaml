@@ -2,7 +2,7 @@
 version: "3"
 
 networks:
-  nginx-php80-postgres13-redis-node:
+  nginx-php80-postgres13-redis:
 
 services:
   ## nginx
@@ -18,7 +18,7 @@ services:
       - php80-service
       - postgres13-service
     networks:
-      - nginx-php80-postgres13-redis-node
+      - nginx-php80-postgres13-redis
 
   ## php80
   php80-service:
@@ -31,7 +31,7 @@ services:
     volumes:
       - .:/var/www/project
     networks:
-      - nginx-php80-postgres13-redis-node
+      - nginx-php80-postgres13-redis
 
   #postgres13
   postgres13-service:
@@ -47,27 +47,13 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     networks:
-      - nginx-php80-postgres13-redis-node
+      - nginx-php80-postgres13-redis
 
   #redis
-  redis:
+  redis-service:
     image: redis:latest
-    container_name: redis
+    container_name: redis-container
     ports:
       - "6379:6379"
     networks:
-      - nginx-php80-postgres13-redis-node
-
-  # nodejs
-  node:
-    image: node:16-buster-slim
-    container_name: node
-    command: npm install
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/var/www/project
-      - ./node_modules:/var/www/project/node_modules
-    working_dir: /var/www/project
-    networks:
-      - nginx-php80-postgres13-redis-node
+      - nginx-php80-postgres13-redis
