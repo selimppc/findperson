@@ -28,6 +28,9 @@ class PersonController extends Controller
         $cacheExpiresIn = config('config.CACHE_EXPIRES_IN');
         $initTime = microtime(true);
         $cacheKey = $this->getCacheKey($birthYear, $birthMonth);
+        dump($cacheKey);
+
+
 
         # Result
         $results = $this->cacheOrQuery($cacheKey, $cacheExpiresIn, $birthYear, $birthMonth);
@@ -51,15 +54,22 @@ class PersonController extends Controller
      */
     private function cacheOrQuery($cacheKey, $cacheExpiresIn, $birthYear, $birthMonth): mixed
     {
-        $data = Redis::get($cacheKey);
-        if (!empty($data)){
+        $storedKeys = Redis::keys(config('config.CACHE_PREFIX_NAME').':*'); # get stored redis keys
+
+        if( Redis::exists($cacheKey) )
+        {
+            $data = Redis::get($cacheKey);
             return json_decode($data, FALSE);
-        }else{
+        } else {
+            $prefixedKeys = $this->generatePrefixedKeys($storedKeys);
+            Redis::del($prefixedKeys); # delete old results
+
+            # DB Query
             $data = $this->dbQuery($birthYear, $birthMonth);
             Redis::set($cacheKey, json_encode($data) );
             Redis::expire($cacheKey, $cacheExpiresIn);
+            return $data;
         }
-        return $data;
     }
 
     /**
@@ -86,8 +96,20 @@ class PersonController extends Controller
      */
     private function getCacheKey($birthYear, $birthMonth): string
     {
-        $cacheKey = 'persons';
-        return $cacheKey."_".$birthYear."_".$birthMonth;
+        $cacheKey = config('config.CACHE_PREFIX_NAME');
+        return $cacheKey.":".$birthYear.":".$birthMonth;
+    }
+
+    /**
+     * @param array $keys
+     * @return string[]|void
+     */
+    private function generatePrefixedKeys(array $keys)
+    {
+        if (!count($keys)) return;
+        return array_map(function ($item) {
+            return $item;
+        }, $keys);
     }
 
 
