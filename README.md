@@ -33,6 +33,6 @@ Application - Find Person
     http://localhost:8080/  -> there is a button to naviagte to persons list
     and for persons -> http://localhost:8080/persons
 
-##  Unit Test 
+##  Unit Test  ( with active database | with data )
 
     $ docker-compose run --rm php80-service php artisan test
