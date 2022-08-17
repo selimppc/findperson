@@ -16,7 +16,7 @@
                             </div>
                             <div class="form-outline" style="margin-right: 5px">
                                 <input type="number" id="birthMonth" name="birthMonth" value="{!! $birthMonth !!}" placeholder="search by birth month" class="form-control" maxlength="12"  />
-                                <div id="birthMonthCheck" style="color: red;">
+                                <div id="birthMonthCheck" style="color: red; display: none;">
                                     <small> * Month must be between 01 to 12. </small>
                                 </div>
                             </div>
