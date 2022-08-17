@@ -15,8 +15,8 @@ WORKDIR /var/www/project
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
+# RUN curl -sS https://get.symfony.com/cli/installer | bash
+# RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 
 RUN echo "extension=mongodb.so" >> /etc/php.ini
 RUN echo "extension=redis.so" >> /etc/php.ini
@@ -26,9 +26,6 @@ RUN echo "extension=amqp.so" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.in
 ## MEMORY
 RUN cd /usr/local/etc/php/conf.d/ && \
   echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker-php-ram-limit.ini
-
-## composer install \
-# RUN composer.phar install --no-interaction --no-dev --optimize-autoloader
 
 EXPOSE 80
 
