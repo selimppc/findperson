@@ -9,10 +9,16 @@
                         <input type="hidden" name="rowLimit" value="{!!  $limit !!}" />
                         <div class="input-group">
                             <div class="form-outline" style="margin-right: 5px">
-                                <input type="number" name="birthYear" value="{!! $birthYear !!}" placeholder="search by birth year" class="form-control" />
+                                <input type="number" id="birthYear" name="birthYear" value="{!! $birthYear !!}" placeholder="search by birth year" class="form-control" />
+                                <div id="birthYearCheck" style="color: red;">
+                                    ** Invalid birth year. Year must be greater than zero.
+                                </div>
                             </div>
                             <div class="form-outline" style="margin-right: 5px">
-                                <input type="number" name="birthMonth" value="{!! $birthMonth !!}" placeholder="search by birth year" class="form-control" maxlength="12"  />
+                                <input type="number" id="birthMonth" name="birthMonth" value="{!! $birthMonth !!}" placeholder="search by birth month" class="form-control" maxlength="12"  />
+                                <div id="birthMonthCheck" style="color: red;">
+                                    ** Invalid birth month. Month must be between 01 to 12.
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary">
@@ -92,6 +98,9 @@
 @section('script')
     <script type="text/javascript">
        jQuery(function ($) {
+           $("#birthYearCheck").hide();
+           $("#birthMonthCheck").hide();
+
             {{-- custom pagination value set on start event --}}
             $('[id^=limitStart]').on('click', function (e) {
                 e.preventDefault();
@@ -102,11 +111,25 @@
             {{-- default value set on cancel event --}}
             $('[id^=cancelLimit]').on('click', function (e) {
                 const defaultLimit = '<?php echo($limit); ?>';
-                alert(defaultLimit);
                 e.preventDefault();
                 $('input[name="limitValue"]').val(defaultLimit);
                 $('input[name="rowLimit"]').val(defaultLimit);
             });
+
+           $("#birthYear").keyup(function () {
+               let year = $("#birthYear").val();
+               if (year < 1 ){
+                   $("#birthYearCheck").show();
+                   return false;
+               }
+           });
+           $("#birthMonth").keyup(function () {
+               let month = $("#birthMonth").val();
+               if ( 12 < month < 1 ){
+                   $("#birthMonthCheck").show();
+                   return false;
+               }
+           });
         });
 
     </script>
