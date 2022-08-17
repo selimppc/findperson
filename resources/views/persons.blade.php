@@ -120,6 +120,7 @@
                let year = $("#birthYear").val();
                if (year < 1 ){
                    $("#birthYearCheck").show();
+                   $("#birthYear").val('');
                    return false;
                }else{
                    $("#birthYearCheck").hide();
@@ -130,6 +131,7 @@
                let month = $("#birthMonth").val();
                if ( (month > 12) || (month < 1)){
                    $("#birthMonthCheck").show();
+                   $("#birthMonth").val('');
                    return false;
                }else {
                    $("#birthMonthCheck").hide();
