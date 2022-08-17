@@ -21,11 +21,10 @@ class PersonDataSeeder extends Seeder
         $dataFile = resource_path($dataFileKey);
         $result = $csvReader->decode($dataFile);
 
-        foreach ($result as $item)
-        {
-            if (isset($item['Birthday']))
-            {
-                DB::table('persons')->insert([
+        $data = [];
+        foreach ($result as $item){
+            if (isset($item['Birthday'])) {
+                $person =[
                     'id' => $item['ID'],
                     'email' => $item['Email Address'] ?? '',
                     'name' => $item['Name'] ?? '',
@@ -34,9 +33,10 @@ class PersonDataSeeder extends Seeder
                     'ip' => $item['IP'] ?? '',
                     'country' => $item['Country'] ?? '',
                     'created_at' => now(),
-                ]);
+                ];
+                $data[] = $person;
             }
-
         }
+        DB::table('persons')->insert($data);
     }
 }
