@@ -11,13 +11,13 @@
                             <div class="form-outline" style="margin-right: 5px">
                                 <input type="number" id="birthYear" name="birthYear" value="{!! $birthYear !!}" placeholder="search by birth year" class="form-control" />
                                 <div id="birthYearCheck" style="color: red;">
-                                    ** Invalid birth year. Year must be greater than zero.
+                                    <small> Invalid birth year. Year must be greater than zero. </small>
                                 </div>
                             </div>
                             <div class="form-outline" style="margin-right: 5px">
                                 <input type="number" id="birthMonth" name="birthMonth" value="{!! $birthMonth !!}" placeholder="search by birth month" class="form-control" maxlength="12"  />
                                 <div id="birthMonthCheck" style="color: red;">
-                                    ** Invalid birth month. Month must be between 01 to 12.
+                                    <small> Invalid birth month. Month must be between 01 to 12. </small>
                                 </div>
                             </div>
 
@@ -121,6 +121,9 @@
                if (year < 1 ){
                    $("#birthYearCheck").show();
                    return false;
+               }else{
+                   $("#birthYearCheck").hide();
+                   return true;
                }
            });
            $("#birthMonth").keyup(function () {
@@ -128,6 +131,9 @@
                if ( 12 < month < 1 ){
                    $("#birthMonthCheck").show();
                    return false;
+               }else {
+                   $("#birthMonthCheck").hide();
+                   return true;
                }
            });
         });
