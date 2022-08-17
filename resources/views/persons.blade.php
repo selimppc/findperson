@@ -10,7 +10,7 @@
                         <div class="input-group">
                             <div class="form-outline" style="margin-right: 5px">
                                 <input type="number" id="birthYear" name="birthYear" value="{!! $birthYear !!}" placeholder="search by birth year" class="form-control" />
-                                <div id="birthYearCheck" style="color: red;">
+                                <div id="birthYearCheck" style="color: red; display: none;">
                                     <small> * Year must be greater than zero. </small>
                                 </div>
                             </div>
